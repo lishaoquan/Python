@@ -3,7 +3,7 @@
 import datetime
 
 # datetime
-from collections import namedtuple, deque, defaultdict, OrderedDict
+from collections import namedtuple, deque, defaultdict, OrderedDict, Counter
 
 now = datetime.datetime.now()
 print(now)
@@ -49,3 +49,8 @@ dict = dict([("a",1),("b",2),("c",3),("a1",4)])
 print(dict)
 orderdict = OrderedDict(dict)
 print(orderdict)
+# 统计字符出现的个数
+c = Counter()
+for i in "I am a promgrammer!":
+    c[i] = c[i] + 1
+print(c)
