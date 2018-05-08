@@ -4,6 +4,7 @@ import datetime
 
 # datetime
 import hashlib
+import random
 from collections import namedtuple, deque, defaultdict, OrderedDict, Counter
 
 import struct
@@ -11,6 +12,8 @@ import struct
 import itertools
 from urllib import request
 from xml.parsers.expat import ParserCreate
+
+from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 now = datetime.datetime.now()
 print(now)
@@ -106,13 +109,13 @@ sha1.update("This is updated by wujiang".encode("utf-8"))
 print(sha1.hexdigest())
 
 # itertools
-ns = itertools.repeat("ABC",3)
+ns = itertools.repeat("ABC", 3)
 for i in ns:
     print(i)
-for i in itertools.chain("ABC","XYZ"):
+for i in itertools.chain("ABC", "XYZ"):
     print(i)
 for key, group in itertools.groupby("AAABBBAAACCCA"):
-    print(key,list(group))
+    print(key, list(group))
 
 
 # XML
@@ -148,9 +151,43 @@ with request.urlopen("https://api.douban.com/v2/book/2129650") as f:
     print("Data:", data.decode("utf-8"))
 
 req = request.Request("http://www.baidu.com/s?wd=Java")
-req.add_header('User-Agent', 'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25')
+req.add_header('User-Agent',
+               'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25')
 with request.urlopen(req) as f:
     print('Status:', f.status, f.reason)
     for k, v in f.getheaders():
         print('%s: %s' % (k, v))
     print('Data:', f.read().decode('utf-8'))
+
+# 使用PIL生成验证码
+# 随机字母:
+def rndChar():
+    return chr(random.randint(65, 90))
+
+# 随机颜色 1:
+def rndColor():
+    return (random.randint(64, 255), random.randint(64, 255),
+            random.randint(64, 255))
+
+# 随机颜色 2:
+def rndColor2():
+    return (random.randint(32, 127), random.randint(32, 127),
+    random.randint(32, 127))
+
+width = 60 * 4
+height = 60
+image = Image.new("RGB", (width, height), (255, 255, 255))
+# 创建 Font 对象:
+font = ImageFont.truetype('C:/Windows/Fonts/arial.ttf', 36)
+# 创建 Draw 对象:
+draw = ImageDraw.Draw(image)
+# 填充每个像素:
+for x in range(width):
+    for y in range(height):
+        draw.point((x, y), fill=rndColor())
+# 输出文字:
+for t in range(4):
+    draw.text((60 * t + 10, 10), rndChar(), font=font, fill=rndColor2())
+# 模糊:
+image = image.filter(ImageFilter.BLUR)
+image.save('F:/Python/study/code.jpg', 'jpeg')
